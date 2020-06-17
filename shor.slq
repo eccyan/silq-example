@@ -12,10 +12,18 @@ def test_bitsize() {
 
 // Shor's Algorithm:
 // https://tsmatz.wordpress.com/2019/06/04/quantum-integer-factorization-by-shor-period-finding-algorithm/
-def f(n:!N, a:!N) {
-    return (n, bitsize(n));
+def shor(n:!N, a:!N) {
+    size := bitsize(n) * 2;
+    q := vector(size, false):B[];
+    // |q> -> H -> |q>
+    for i in [0..size) {
+        q[i] := H(q[i]);
+    }
+    return (n, a, q);
 }
 
 def main(){
   test_bitsize();
+
+  return shor(57, 5);
 }
