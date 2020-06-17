@@ -1,0 +1,21 @@
+def bitsize(n:!N) lifted {
+    return ceil(log(n + 1)/log(2)) coerce !N;
+}
+
+def test_bitsize() {
+    if bitsize(0) != 0 { print("F n=0") };
+    if bitsize(1) != 1 { print("F n=1") };
+    if bitsize(3) != 2 { print("F n=3") };
+    if bitsize(7) != 3 { print("F n=7") };
+    if bitsize(8) != 4 { print("F n=8") };
+}
+
+// Shor's Algorithm:
+// https://tsmatz.wordpress.com/2019/06/04/quantum-integer-factorization-by-shor-period-finding-algorithm/
+def f(n:!N, a:!N) {
+    return (n, bitsize(n));
+}
+
+def main(){
+  test_bitsize();
+}
