@@ -10,20 +10,49 @@ def test_bitsize() {
     if bitsize(8) != 4 { print("F n=8") };
 }
 
+def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
+    for i in [0..size) {
+        mod := 0:!N;
+        for j in [1..2^(size - i)) {
+            mod = (mod * a) % n;
+        }
+    }
+
+    return q;
+}
+
+// controlled-R1 gate
+def R (q:B, k:!N) {
+    if q { phase(π / 2^(k + 1)); }
+    return q;
+}
+
+def QFT[n:!N] (qs:B^n) {
+    qs[0] := H(qs[0]);
+    qs[1] := R(qs[1], 1);
+    return qs;
+}
+
+
 // Shor's Algorithm:
 // https://tsmatz.wordpress.com/2019/06/04/quantum-integer-factorization-by-shor-period-finding-algorithm/
 def shor(n:!N, a:!N) {
     size := bitsize(n) * 2;
     q := vector(size, false):B[];
+
     // |q> -> H -> |q>
     for i in [0..size) {
         q[i] := H(q[i]);
     }
+
+    // |x⟩|0(=y)⟩ -> |x⟩ |a^x mod N⟩
     return (n, a, q);
 }
 
 def main(){
   test_bitsize();
+  qs := vector(2, 0:B) as B^2;
+  return QFT(qs, 3);
 
-  return shor(57, 5);
+  //return shor(57, 5);
 }
