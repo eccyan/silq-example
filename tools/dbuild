@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -ex
+
+here="$(realpath $(dirname "$0"))"
+image="silq"
+toplevel="$(realpath "$here/..")"
+docker_args=()
+
+if [[ $# != 0 ]]; then
+  args=("$@")
+else
+  args=(/bin/bash -i)
+fi
+
+if [ "$PWD" != "$toplevel" ]; then
+  docker_common_args+=(-v "$toplevel:$toplevel:z")
+fi
+
+
+tmpdir=$(mktemp -d)
+docker_common_args+=(
+  --pids-limit -1 \
+  --network host \
+  --cap-add SYS_PTRACE \
+  -v "$PWD:$PWD:z" \
+  -v "$tmpdir:/tmp:z" \
+  -v /etc/localtime:/etc/localtime:ro \
+  -w "$PWD" \
+  -e HOME \
+  "${docker_args[@]}" \
+  "$image" \
+  "${args[@]}"
+)
+
+docker run --rm "${docker_common_args[@]}"
+
+container=$(
+    docker run \
+       "--detach=true" \
+       "${docker_common_args[@]}"
+)
+
+kill_it() {
+    if [[ -n "$container" ]]; then
+        docker rm -f "$container" > /dev/null
+        container=
+    fi
+    rm -rf "$tmpdir"
+}
+
+trap kill_it SIGTERM SIGINT SIGHUP EXIT
+
+docker logs --follow "$container"
+
+if [[ -n "$container" ]]; then
+    exitcode="$(docker wait "$container")"
+else
+    exitcode=99
+fi
+
+kill_it
+
+trap - SIGTERM SIGINT SIGHUP EXIT
+
+[[ -z "$exitcode" ]] && exitcode=1
+
+exit "$exitcode"
