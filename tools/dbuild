@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 here="$(realpath $(dirname "$0"))"
 image="silq"
@@ -32,8 +32,6 @@ docker_common_args+=(
   "$image" \
   "${args[@]}"
 )
-
-docker run --rm "${docker_common_args[@]}"
 
 container=$(
     docker run \
