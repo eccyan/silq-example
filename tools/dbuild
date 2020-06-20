@@ -34,9 +34,9 @@ docker_common_args+=(
 )
 
 container=$(
-    docker run \
-       "--detach=true" \
-       "${docker_common_args[@]}"
+  docker run \
+     "--detach=true" \
+     "${docker_common_args[@]}"
 )
 
 kill_it() {
