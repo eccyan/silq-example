@@ -50,6 +50,6 @@ def shor(n:!N, a:!N) {
 }
 
 def main(){
-  qs := vector(5, 0:B);
+  qs := vector(2, 0:B);
   return QFT(qs);
 }
