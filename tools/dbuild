@@ -35,6 +35,7 @@ docker_common_args+=(
 
 container=$(
   docker run \
+     "-it" \
      "--detach=true" \
      "${docker_common_args[@]}"
 )
