@@ -2,12 +2,10 @@ def bitsize(n:!N) lifted {
     return ceil(log(n + 1)/log(2)) coerce !N;
 }
 
-def test_bitsize() {
-    if bitsize(0) != 0 { print("F n=0") };
-    if bitsize(1) != 1 { print("F n=1") };
-    if bitsize(3) != 2 { print("F n=3") };
-    if bitsize(7) != 3 { print("F n=7") };
-    if bitsize(8) != 4 { print("F n=8") };
+// controlled-R gate
+def R (q:B, const k:!N) {
+    if q { phase(2*π/2^(k + 1)) }
+    return q;
 }
 
 def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
@@ -21,18 +19,13 @@ def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
     return q;
 }
 
-// controlled-R1 gate
-def R (q:B, k:!N) {
-    if q { phase(π / 2^(k + 1)); }
-    return q;
-}
-
+// https://whyitsso.net/physics/quantum_mechanics/QFT.html
 def QFT[n:!N] (qs:B^n) {
+    k := 1:!N;
     qs[0] := H(qs[0]);
-    qs[1] := R(qs[1], 1);
+    qs[1] := R(qs[1], k);
     return qs;
 }
-
 
 // Shor's Algorithm:
 // https://tsmatz.wordpress.com/2019/06/04/quantum-integer-factorization-by-shor-period-finding-algorithm/
@@ -50,9 +43,10 @@ def shor(n:!N, a:!N) {
 }
 
 def main(){
-  test_bitsize();
-  qs := vector(2, 0:B) as B^2;
-  return QFT(qs, 3);
-
-  //return shor(57, 5);
+  qs := vector(2, 0:B);
+  k := 1:!N;
+  qs[0] := H(qs[0]);
+  qs[1] := R(qs[1], k);
+  return qs;
+  //return QFT(qs);
 }
