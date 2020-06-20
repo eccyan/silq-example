@@ -3,9 +3,8 @@ def bitsize(n:!N) lifted {
 }
 
 // controlled-R gate
-def R (q:B, const k:!N) {
-    if q { phase(2*π/2^(k + 1)) }
-    return q;
+def R (q:B, k:!N) lifted {
+    if dup(q) { phase(2*π/2^(k + 1)) }
 }
 
 def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
@@ -22,8 +21,8 @@ def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
 // https://whyitsso.net/physics/quantum_mechanics/QFT.html
 def QFT[n:!N] (qs:B^n) {
     k := 1:!N;
+    R(qs[1], k);
     qs[0] := H(qs[0]);
-    qs[1] := R(qs[1], k);
     return qs;
 }
 
@@ -45,8 +44,5 @@ def shor(n:!N, a:!N) {
 def main(){
   qs := vector(2, 0:B);
   k := 1:!N;
-  qs[0] := H(qs[0]);
-  qs[1] := R(qs[1], k);
-  return qs;
-  //return QFT(qs);
+  return QFT(qs);
 }
