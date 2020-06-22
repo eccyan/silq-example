@@ -9,8 +9,7 @@ RUN dnf -y install 'dnf-command(copr)' \
     && echo 'ALL ALL=(ALL:ALL) NOPASSWD: ALL' >> /etc/sudoers \
     && cp system-auth /etc/pam.d \
     && echo 'Defaults !requiretty' >> /etc/sudoers
-RUN git clone https://github.com/eth-sri/silq.git && cd ./silq \
-    && /bin/bash -x ./dependencies.sh \
-    && /bin/bash -x ./build.sh \
+RUN git clone --recursive https://github.com/eth-sri/silq.git && cd ./silq \
+    && dmd -g -debug -J. -Jlibrary *.d ast/*.d util/*.d -ofsilq \
     && ln -s $(pwd)/silq /usr/local/bin/silq
 CMD silq
