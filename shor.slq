@@ -3,7 +3,7 @@ def bitsize(n:!N) lifted {
 }
 
 // controlled-R gate
-def R (q:B, const k:!N) {
+def R (q:B, const k:!N) mfree {
     if q { phase(2*π/2^(k + 1)) }
     return q;
 }
@@ -32,9 +32,7 @@ def QFT[n:!N] (qs:B^n) mfree:B^n {
         qs[i] := H(qs[i]);
 
         for j in [i+1..n) {
-            //qs[j] := R(qs[j], (j - i) coerce !N);
-            k := (j - i) coerce !N;
-            if qs[j] { phase(π/2^(k + 1)) }
+            qs[j] := R(qs[j], (j - i) coerce !N);
         }
     }
 
