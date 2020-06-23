@@ -2,10 +2,13 @@ def bitsize(n:!N) lifted {
     return ceil(log(n + 1)/log(2)) coerce !N;
 }
 
-// controlled-R gate
-def R (q:B, const k:!N) mfree {
-    if q { phase(2*π/2^(k + 1)) }
+def Rz (r:!ℝ, q:B) mfree {
+    if q { phase(r) }
     return q;
+}
+
+def R (q:B, const k:!ℤ) mfree {
+    return Rz(π/2^k, q:B);
 }
 
 def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
@@ -30,9 +33,11 @@ def swap_all[n:!N] (qs:B^n) mfree:B^n {
 def QFT[n:!N] (qs:B^n) mfree:B^n {
     for i in [0..n) {
         qs[i] := H(qs[i]);
+        print(1);
 
         for j in [i+1..n) {
-            qs[j] := R(qs[j], (j - i) coerce !N);
+            print(2);
+            qs[j] := R(qs[j], (j - i));
         }
     }
 
@@ -55,8 +60,6 @@ def shor(n:!N, a:!N) {
 }
 
 def main(){
-    qs := vector(3, 0:B);
-    for i in [0..3) { qs[i] := H(qs[i]) }
-    qft := QFT(dup(qs));
-    return (measure(qs), measure(reverse(QFT[3])(qft)));
+    qs := vector(2, 1:B);
+    return QFT(dup(qs));
 }
