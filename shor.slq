@@ -2,13 +2,10 @@ def bitsize(n:!N) lifted {
     return ceil(log(n + 1)/log(2)) coerce !N;
 }
 
-def Rz (r:!ℝ, q:B) mfree {
+// Single-qubit rotation about the Z axis.
+def U1 (r:!ℝ, q:B) mfree {
     if q { phase(r) }
     return q;
-}
-
-def R (q:B, const k:!ℤ) mfree {
-    return Rz(π/2^k, q:B);
 }
 
 def find_period[size:!N] (n:!N, a:!N, q:B^size) lifted {
@@ -33,11 +30,9 @@ def swap_all[n:!N] (qs:B^n) mfree:B^n {
 def QFT[n:!N] (qs:B^n) mfree:B^n {
     for i in [0..n) {
         qs[i] := H(qs[i]);
-        print(1);
 
         for j in [i+1..n) {
-            print(2);
-            qs[j] := R(qs[j], (j - i));
+            qs[j] := U1(π/2^(j - i), qs[j]);
         }
     }
 
